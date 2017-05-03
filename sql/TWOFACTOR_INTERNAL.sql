@@ -9,23 +9,23 @@ SET DEFINE OFF
 
 CREATE OR REPLACE PACKAGE TWOFACTOR_INTERNAL AS
   /************************************************************************
-  
+
       OraTOtP - Oracle Time-based One-time Password
       Copyright (C) 2016  Rodrigo Jorge <http://www.dbarj.com.br/>
-  
+
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-  
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-  
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   ************************************************************************/
   -- Code Gen
   TYPE CODEROW IS RECORD(
@@ -56,23 +56,23 @@ END TWOFACTOR_INTERNAL;
 
 CREATE OR REPLACE PACKAGE BODY TWOFACTOR_INTERNAL AS
   /************************************************************************
-  
+
       OraTOtP - Oracle Time-based One-time Password
       Copyright (C) 2016  Rodrigo Jorge <http://www.dbarj.com.br/>
-  
+
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-  
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-  
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   ************************************************************************/
   CBASE32             CONSTANT VARCHAR2(32 CHAR) := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
   DEFAULT_SECRET_PASS CONSTANT VARCHAR2(30 CHAR) := 'DBA-RJ'; -- If changed, any generated Key w/o password may stop working.
@@ -276,13 +276,13 @@ CREATE OR REPLACE PACKAGE BODY TWOFACTOR_INTERNAL AS
     INTO   VSECRET
     FROM   DUAL
     CONNECT BY LEVEL <= 16;
-  
+
     RETURN VSECRET;
   END SECRETGEN;
 
   FUNCTION CODEGEN(PSECRET IN VARCHAR2, PGAP IN NUMBER) RETURN CODES
     PIPELINED IS
-  
+
     VBITS        VARCHAR2(80 CHAR) := ''; --16 char * 5 bits / Bits representing secret position on CBASE32
     VHEXABITS    VARCHAR2(500) := ''; -- VBITS in HEXA representation
     VUTIME       NUMBER(38); -- Unix time / POSIX Time / Epoch time
@@ -294,7 +294,7 @@ CREATE OR REPLACE PACKAGE BODY TWOFACTOR_INTERNAL AS
     VP1          NUMBER;
     VP2          NUMBER := POWER(2, 31) - 1;
     VOUTKEY      CODEROW; -- Store the output
-  
+
     FUNCTION NUM_TO_BIN(PNUM NUMBER) RETURN VARCHAR2 IS
       VBIN VARCHAR2(8);
       VNUM NUMBER := PNUM;
@@ -310,7 +310,7 @@ CREATE OR REPLACE PACKAGE BODY TWOFACTOR_INTERNAL AS
       END LOOP;
       RETURN VBIN;
     END NUM_TO_BIN;
-  
+
     FUNCTION BIN_TO_HEX(PNUM VARCHAR2) RETURN VARCHAR2 IS
       VHEX  VARCHAR2(20);
       VHEXC VARCHAR2(1);
@@ -326,20 +326,20 @@ CREATE OR REPLACE PACKAGE BODY TWOFACTOR_INTERNAL AS
       END LOOP;
       RETURN VHEX;
     END BIN_TO_HEX;
-  
+
   BEGIN
-  
+
     FOR C IN 1 .. LENGTH(PSECRET)
     LOOP
       VBITS := VBITS || LPAD(NUM_TO_BIN(INSTR(CBASE32, SUBSTR(PSECRET, C, 1)) - 1), 5, '0');
     END LOOP;
-  
+
     VHEXABITS := BIN_TO_HEX(VBITS);
-  
+
     SELECT EXTRACT(DAY FROM(DIFF)) * 86400 + EXTRACT(HOUR FROM(DIFF)) * 3600 + EXTRACT(MINUTE FROM(DIFF)) * 60 + EXTRACT(SECOND FROM(DIFF)) N INTO VUTIME FROM (SELECT CURRENT_TIMESTAMP - TIMESTAMP '1970-01-01 00:00:00 +00:00' DIFF FROM DUAL);
-  
+
     VUTIMERANGE := VUTIME - FLOOR(PGAP / 2);
-  
+
     WHILE TRUE
     LOOP
       SELECT LPAD(LTRIM(TO_CHAR(FLOOR(VUTIMERANGE / 30), 'xxxxxxxxxxxxxxxx')), 16, '0') INTO VUTIME30CHK FROM DUAL;
@@ -677,7 +677,7 @@ CREATE OR REPLACE PACKAGE BODY TWOFACTOR_INTERNAL AS
     ELSE
       DBMS_SESSION.SET_CONTEXT('TWOFACTOR_CTX', 'AUTHENTICATED', 'FALSE');
     END IF;
-  
+
   END CHECKANDAUTHUSER;
 
 END TWOFACTOR_INTERNAL;
