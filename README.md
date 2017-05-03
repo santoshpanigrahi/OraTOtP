@@ -44,6 +44,7 @@ You should not enable 2-Factor Authentication for roles used by logins with unat
 ## 4. Versions ##
 
 * v1.00 - Initial Release
+* v1.01 - Defined a separated Secret Encryption Function
 
 ## 5. Other Information ##
 
