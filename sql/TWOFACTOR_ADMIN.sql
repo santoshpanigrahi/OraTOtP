@@ -9,23 +9,23 @@ SET DEFINE OFF
 
 CREATE OR REPLACE PACKAGE TWOFACTOR_ADMIN AS
   /************************************************************************
-  
+
       OraTOtP - Oracle Time-based One-time Password
       Copyright (C) 2016  Rodrigo Jorge <http://www.dbarj.com.br/>
-  
+
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-  
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-  
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   ************************************************************************/
   PROCEDURE SETUP(PUSER IN VARCHAR2, PPASS IN VARCHAR2 DEFAULT NULL, PGAP IN NUMBER DEFAULT NULL);
   PROCEDURE DECONFIG(PUSER IN VARCHAR2, PCODE IN VARCHAR2 DEFAULT NULL, PPASS IN VARCHAR2 DEFAULT NULL, PISADMIN IN BOOLEAN DEFAULT TRUE);
@@ -39,23 +39,23 @@ END TWOFACTOR_ADMIN;
 
 CREATE OR REPLACE PACKAGE BODY TWOFACTOR_ADMIN AS
   /************************************************************************
-  
+
       OraTOtP - Oracle Time-based One-time Password
       Copyright (C) 2016  Rodrigo Jorge <http://www.dbarj.com.br/>
-  
+
       This program is free software: you can redistribute it and/or modify
       it under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
       (at your option) any later version.
-  
+
       This program is distributed in the hope that it will be useful,
       but WITHOUT ANY WARRANTY; without even the implied warranty of
       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
       GNU General Public License for more details.
-  
+
       You should have received a copy of the GNU General Public License
       along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   ************************************************************************/
   PROCEDURE ERRORIFUSERNOTSETUP(PUSER IN VARCHAR2) IS
   BEGIN

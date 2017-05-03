@@ -1,5 +1,5 @@
 /************************************************************************
-   
+
     OraTOtP - Oracle Time-based One-time Password
     Copyright (C) 2016  Rodrigo Jorge <http://www.dbarj.com.br/>
 
